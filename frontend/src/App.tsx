@@ -9,6 +9,26 @@ function App() {
         return cookieValue ? decodeURIComponent(cookieValue) : null;
     };
 
+    const join = async () => {
+        const csrfToken = getCsrfToken();
+        const response = await fetch("http://localhost:8080/auth/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-XSRF-TOKEN": csrfToken ?? "",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                username: "user12",
+                password: "pass",
+            }),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        console.log(await response.text());
+    };
+
     const login = async () => {
         const csrfToken = getCsrfToken();
         const response = await fetch("http://localhost:8080/auth/login", {
@@ -60,6 +80,7 @@ function App() {
     return (
         <>
             <h1>Test Application</h1>
+            <button onClick={join}>Join</button>
             <button onClick={login}>Login</button>
             <button onClick={getUsername}>Get Username</button>
             <button onClick={logOut}>Logout</button>
