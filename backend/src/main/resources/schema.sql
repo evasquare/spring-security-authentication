@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS user_entity (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(400) UNIQUE NOT NULL,
+    password VARCHAR(400) NOT NULL,
+    role VARCHAR(400) NOT NULL,
+    PRIMARY KEY (id)
+);
