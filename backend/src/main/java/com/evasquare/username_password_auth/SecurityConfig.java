@@ -18,6 +18,9 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,8 +47,9 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // .headers(headers -> headers
                 // .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .cors(AbstractHttpConfigurer::disable)
+                // .cors(AbstractHttpConfigurer::disable)
                 // .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
                         // .requestMatchers("/h2-console").permitAll()
@@ -68,6 +72,20 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        // Allow credentials (cookies, auth headers)
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
 
