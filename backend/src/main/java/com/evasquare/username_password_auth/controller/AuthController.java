@@ -4,8 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginModel loginModel, HttpSession session) {
-        Authentication authentication = authenticationManager.authenticate(
+        var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
                         loginModel.getPassword()));
 
@@ -55,7 +53,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
 
-        UserEntity data = new UserEntity();
+        var data = new UserEntity();
         data.setUsername(requestBody.getUsername());
         data.setPassword(bCryptPasswordEncoder.encode(requestBody.getPassword()));
         data.setRole("ROLE_USER");
@@ -72,12 +70,10 @@ public class AuthController {
     @GetMapping("/get-role")
     public String getRole() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-
         var authorities = authentication.getAuthorities();
         var iterator = authorities.iterator();
-
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        var auth = iterator.next();
+        var role = auth.getAuthority();
 
         return role;
     }
