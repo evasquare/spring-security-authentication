@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.evasquare.username_password_auth.entity.UserEntity;
-import com.evasquare.username_password_auth.models.JoinModel;
-import com.evasquare.username_password_auth.models.LoginModel;
+import com.evasquare.username_password_auth.models.JoinAndLoginModel;
 import com.evasquare.username_password_auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,35 +25,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final SecurityContextHolderStrategy securityContextHolderStrategy;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SecurityContextRepository securityContextRepository;
+    private final SecurityContextHolderStrategy securityContextHolderStrategy;
+    private final UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @RequestBody LoginModel loginModel,
+            @RequestBody JoinAndLoginModel loginModel,
             HttpSession session,
             HttpServletRequest request,
             HttpServletResponse response) {
-        var context = SecurityContextHolder.createEmptyContext();
-        var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
-                        loginModel.getPassword()));
-        context.setAuthentication(authentication);
-        this.securityContextHolderStrategy.setContext(context);
-        this.securityContextRepository.saveContext(context, request, response);
-
         if (session.getAttribute("user") != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Already logged in.");
         }
 
+        var context = SecurityContextHolder.createEmptyContext();
+        var authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
+                        loginModel.getPassword()));
+
+        // Original implementation from #AuthenticationFilter
+        context.setAuthentication(authentication);
+        this.securityContextHolderStrategy.setContext(context);
+        this.securityContextRepository.saveContext(context, request, response);
+
         session.setAttribute("user", authentication.getPrincipal());
         return ResponseEntity.status(HttpStatus.OK).body("Login successful!");
     }
-
-
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
@@ -68,7 +67,7 @@ public class AuthController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody JoinModel requestBody) {
+    public ResponseEntity<String> join(@RequestBody JoinAndLoginModel requestBody) {
         boolean isUser = userRepository.existsByUsername(requestBody.getUsername());
         if (isUser) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
@@ -87,7 +86,6 @@ public class AuthController {
     public String getUsername() {
         var context = SecurityContextHolder.getContext();
         var authentication = context.getAuthentication();
-
         return authentication.getName();
     }
 
@@ -95,7 +93,6 @@ public class AuthController {
     public String getRole() {
         var context = SecurityContextHolder.getContext();
         var authentication = context.getAuthentication();
-
         return authentication.getAuthorities().iterator().next().getAuthority();
     }
 }

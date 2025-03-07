@@ -1,4 +1,4 @@
-package com.evasquare.username_password_auth;
+package com.evasquare.username_password_auth.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import java.util.function.Supplier;
@@ -38,17 +38,19 @@ public class SecurityConfig {
                 .sessionManagement((auth) -> auth
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false))
+
                 .sessionManagement((session) -> session
                         .sessionFixation(
                                 (sessionFixation) -> sessionFixation
                                         .newSession()))
-                .httpBasic(withDefaults())
+
+                // .httpBasic(withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
                 // .headers(headers -> headers
                 // .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 // .cors(AbstractHttpConfigurer::disable)
                 // .csrf(AbstractHttpConfigurer::disable)
-                .cors(withDefaults())
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
                         // .requestMatchers("/h2-console").permitAll()
@@ -74,7 +76,7 @@ public class SecurityConfig {
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        // Allow credentials (cookies, auth headers)
+        // Allow credentials like cookies and auth headers
         configuration.setAllowCredentials(true);
 
         var source = new UrlBasedCorsConfigurationSource();
@@ -143,30 +145,3 @@ final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
                 .resolveCsrfTokenValue(request, csrfToken);
     }
 }
-
-
-// class JSONUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-// private boolean postOnly = true;
-
-// @Override
-// public Authentication attemptAuthentication(HttpServletRequest request,
-// HttpServletResponse response) throws AuthenticationException {
-// if (this.postOnly && !request.getMethod().equals("POST")) {
-// throw new AuthenticationServiceException(
-// "Authentication method not supported: " + request.getMethod());
-// }
-
-// String username = obtainUsername(request);
-// username = (username != null) ? username.trim() : "";
-// String password = obtainPassword(request);
-// password = (password != null) ? password : "";
-
-// UsernamePasswordAuthenticationToken authRequest =
-// UsernamePasswordAuthenticationToken.unauthenticated(username, password);
-
-// // Allow subclasses to set the "details" property
-// setDetails(request, authRequest);
-
-// return this.getAuthenticationManager().authenticate(authRequest);
-// }
-// }
