@@ -60,8 +60,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/join").permitAll()
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/get-username")
-                        .authenticated()
+                        .requestMatchers("/auth/get-username").authenticated()
+                        .requestMatchers("/auth/get-roles").authenticated()
                         .anyRequest().authenticated())
                 .csrf((csrf) -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
