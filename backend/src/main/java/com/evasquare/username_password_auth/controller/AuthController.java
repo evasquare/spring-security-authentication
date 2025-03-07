@@ -33,17 +33,24 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
                         loginModel.getPassword()));
 
+        if (session.getAttribute("user") != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Already logged in.");
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         session.setAttribute("user", authentication.getPrincipal());
-
-        return ResponseEntity.ok("Login successful!");
+        return ResponseEntity.status(HttpStatus.OK).body("Login successful!");
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
+        }
+
         session.invalidate();
         SecurityContextHolder.clearContext();
-        return ResponseEntity.ok("Logout successful!");
+        return ResponseEntity.status(HttpStatus.OK).body("Logout successful!");
     }
 
     @PostMapping("/join")
