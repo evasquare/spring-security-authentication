@@ -2,8 +2,8 @@ package com.evasquare.username_password_auth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,22 +22,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginModel loginModel, HttpSession session) {
-        var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
-                        loginModel.getPassword()));
+    public ResponseEntity<String> login(
+            @RequestBody LoginModel loginModel,
+            HttpSession session) {
+
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
 
         if (session.getAttribute("user") != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Already logged in.");
         }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         session.setAttribute("user", authentication.getPrincipal());
         return ResponseEntity.status(HttpStatus.OK).body("Login successful!");
     }
@@ -71,17 +70,17 @@ public class AuthController {
 
     @GetMapping("/get-username")
     public String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
+
+        return authentication.getName();
     }
 
     @GetMapping("/get-role")
     public String getRole() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var authorities = authentication.getAuthorities();
-        var iterator = authorities.iterator();
-        var auth = iterator.next();
-        var role = auth.getAuthority();
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
 
-        return role;
+        return authentication.getAuthorities().iterator().next().getAuthority();
     }
 }
