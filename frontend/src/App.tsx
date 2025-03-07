@@ -50,15 +50,10 @@ function App() {
     };
 
     const getUsername = async () => {
-        const csrfToken = getCsrfToken();
         const response = await fetch(
             "http://localhost:8080/auth/get-username",
             {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-XSRF-TOKEN": csrfToken ?? "",
-                },
                 credentials: "include",
             }
         );
