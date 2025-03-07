@@ -54,11 +54,15 @@ function App() {
         const response = await fetch(
             "http://localhost:8080/auth/get-username",
             {
-                method: "GET",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-XSRF-TOKEN": csrfToken ?? "",
                 },
+                body: JSON.stringify({
+                    username: "user12",
+                    password: "pass",
+                }),
                 credentials: "include",
             }
         );

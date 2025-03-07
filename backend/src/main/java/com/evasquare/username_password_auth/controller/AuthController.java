@@ -66,7 +66,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body("Join Successful!");
     }
 
-    @GetMapping("/get-username")
+    @PostMapping("/get-username")
     public String getUsername() {
         var context = SecurityContextHolder.getContext();
         var authentication = context.getAuthentication();
