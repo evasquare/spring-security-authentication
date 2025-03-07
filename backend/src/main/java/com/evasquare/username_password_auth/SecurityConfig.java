@@ -88,18 +88,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
+    AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityContextRepository securityContextRepository() {
+    SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
     }
 
     @Bean
-    public SecurityContextHolderStrategy securityContextHolderStrategy() {
+    SecurityContextHolderStrategy securityContextHolderStrategy() {
         return SecurityContextHolder.getContextHolderStrategy();
     }
 }
