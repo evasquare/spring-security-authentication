@@ -1,84 +1,18 @@
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
+import Home from "./Home";
+import UserPage from "./User";
+import Join from "./Join";
 
 function App() {
-    const getCsrfToken = () => {
-        const cookieValue = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("XSRF-TOKEN="))
-            ?.split("=")[1];
-        return cookieValue ? decodeURIComponent(cookieValue) : null;
-    };
-
-    const join = async () => {
-        const csrfToken = getCsrfToken();
-        const response = await fetch("http://localhost:8080/auth/join", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-XSRF-TOKEN": csrfToken ?? "",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                username: "user12",
-                password: "pass",
-            }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        console.log(await response.text());
-    };
-
-    const login = async () => {
-        const csrfToken = getCsrfToken();
-        const response = await fetch("http://localhost:8080/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-XSRF-TOKEN": csrfToken ?? "",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                username: "user12",
-                password: "pass",
-            }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        console.log(await response.text());
-    };
-
-    const getUsername = async () => {
-        const response = await fetch(
-            "http://localhost:8080/auth/get-username",
-            {
-                method: "GET",
-                credentials: "include",
-            }
-        );
-        console.log(await response.text());
-    };
-
-    const logOut = async () => {
-        const csrfToken = getCsrfToken();
-        const response = await fetch("http://localhost:8080/auth/logout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-XSRF-TOKEN": csrfToken ?? "",
-            },
-            credentials: "include",
-        });
-        console.log(await response.text());
-    };
     return (
         <>
-            <h1>Test Application</h1>
-            <button onClick={join}>Join</button>
-            <button onClick={login}>Login</button>
-            <button onClick={getUsername}>Get Username</button>
-            <button onClick={logOut}>Logout</button>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Home />}></Route>
+                    <Route path="/user" element={<UserPage />}></Route>
+                    <Route path="/join" element={<Join />}></Route>
+                </Routes>
+            </Router>
         </>
     );
 }
