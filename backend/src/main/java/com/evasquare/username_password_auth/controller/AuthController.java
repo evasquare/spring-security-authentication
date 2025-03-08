@@ -68,8 +68,8 @@ public class AuthController {
 
     @PostMapping("/join")
     public ResponseEntity<String> join(@RequestBody JoinAndLoginModel requestBody) {
-        boolean isUser = userRepository.existsByUsername(requestBody.getUsername());
-        if (isUser) {
+        boolean isUsernameTaken = userRepository.existsByUsername(requestBody.getUsername());
+        if (isUsernameTaken) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
 
