@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCsrfToken } from "./lib/csrf";
+import { getCsrfToken, validateSession } from "./lib/utils";
 import { SERVER_URL } from "./lib/variables";
 
 const User = () => {
@@ -7,6 +7,9 @@ const User = () => {
 
     useEffect(() => {
         (async () => {
+            if (!(await validateSession())) {
+                window.location.href = "/";
+            }
             setUsername(await getUsername());
         })();
     }, []);

@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { getCsrfToken } from "./lib/csrf";
+import { getCsrfToken, validateSession } from "./lib/utils";
 import { SERVER_URL } from "./lib/variables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Inputs {
     username: string;
@@ -9,7 +9,13 @@ interface Inputs {
 }
 
 const Home = () => {
-    // todo: if user is already logged in, redirect to User page.
+    useEffect(() => {
+        (async () => {
+            if (await validateSession()) {
+                window.location.href = "/user";
+            }
+        })();
+    }, []);
 
     const [errorMessage, setErrorMessage] = useState<string>("");
     const { register, handleSubmit } = useForm<Inputs>();

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getCsrfToken } from "./lib/csrf";
+import { getCsrfToken, validateSession } from "./lib/utils";
 import { SERVER_URL } from "./lib/variables";
 
 interface Inputs {
@@ -9,6 +9,14 @@ interface Inputs {
 }
 
 const Join = () => {
+    useEffect(() => {
+        (async () => {
+            if (await validateSession()) {
+                window.location.href = "/user";
+            }
+        })();
+    }, []);
+
     const [errorMessage, setErrorMessage] = useState<string>("");
     const { register, handleSubmit } = useForm<Inputs>();
 

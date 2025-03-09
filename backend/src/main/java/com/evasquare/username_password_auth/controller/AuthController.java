@@ -95,4 +95,15 @@ public class AuthController {
         var authentication = context.getAuthentication();
         return authentication.getAuthorities().iterator().next().getAuthority();
     }
+
+    @PostMapping("/validation")
+    public ResponseEntity<Boolean> validateSession() {
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+    }
 }
