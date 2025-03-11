@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCsrfToken, validateSession } from "./lib/utils";
-import { SERVER_URL } from "./lib/variables";
+import { getCsrfToken, validateSession } from "../lib/utils";
+import { SERVER_URL } from "../lib/variables";
 
 const User = () => {
     const [username, setUsername] = useState<string | null>(null);

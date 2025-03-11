@@ -1,14 +1,14 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import { getCsrfToken, validateSession } from "./lib/utils";
-import { SERVER_URL } from "./lib/variables";
 import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { getCsrfToken, validateSession } from "../lib/utils";
+import { SERVER_URL } from "../lib/variables";
 
 interface Inputs {
     username: string;
     password: string;
 }
 
-const Home = () => {
+const Join = () => {
     useEffect(() => {
         (async () => {
             if (await validateSession()) {
@@ -21,10 +21,9 @@ const Home = () => {
     const { register, handleSubmit } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        console.log(data);
         try {
             const csrfToken = getCsrfToken();
-            const response = await fetch(`${SERVER_URL}/auth/login`, {
+            const response = await fetch(`${SERVER_URL}/auth/join`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -39,7 +38,7 @@ const Home = () => {
             if (!response.ok) {
                 throw new Error(await response.text());
             }
-            window.location.href = "/user";
+            window.location.href = "/";
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -49,18 +48,21 @@ const Home = () => {
 
     return (
         <>
-            <h1>Login</h1>
+            <h1>Join</h1>
             {errorMessage}
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input {...register("username", { required: true })} />
+                <input
+                    id="username"
+                    {...register("username", { required: true })}
+                />
                 <input {...register("password", { required: true })} />
 
                 <input type="submit" />
             </form>
 
-            <a href="/join">Join?</a>
+            <a href="/">Login?</a>
         </>
     );
 };
 
-export default Home;
+export default Join;

@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import Home from "./Home";
-import UserPage from "./User";
-import Join from "./Join";
+import Home from "./pages/Home";
+import UserPage from "./pages/User";
+import Join from "./pages/Join";
+import "normalize.css";
 
 function App() {
     return (
