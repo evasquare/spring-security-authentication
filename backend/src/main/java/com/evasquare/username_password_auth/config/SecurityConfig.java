@@ -35,13 +35,13 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
         http
-                .sessionManagement((auth) -> auth
+                .sessionManagement(auth -> auth
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false))
 
-                .sessionManagement((session) -> session
+                .sessionManagement(session -> session
                         .sessionFixation(
-                                (sessionFixation) -> sessionFixation
+                                sessionFixation -> sessionFixation
                                         .newSession()))
 
                 // .httpBasic(withDefaults())
@@ -51,6 +51,7 @@ public class SecurityConfig {
                 // .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 // .cors(AbstractHttpConfigurer::disable)
                 // .csrf(AbstractHttpConfigurer::disable)
+
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
                         // .requestMatchers("/h2-console").permitAll()
@@ -64,9 +65,11 @@ public class SecurityConfig {
                         .requestMatchers("/auth/get-username").authenticated()
                         .requestMatchers("/auth/get-roles").authenticated()
                         .anyRequest().authenticated())
+
                 .csrf((csrf) -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()));;
+
         return http.build();
     }
 
@@ -76,11 +79,13 @@ public class SecurityConfig {
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
+
         // Allow credentials like cookies and auth headers
         configuration.setAllowCredentials(true);
 
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 

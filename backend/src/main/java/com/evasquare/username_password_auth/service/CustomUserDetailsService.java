@@ -15,10 +15,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var userDataOptional = userRepository.findByUsername(username);
+        var userEntityOptional = userRepository.findByUsername(username);
 
-        if (userDataOptional.isPresent()) {
-            return new CustomUserDetails(userDataOptional.get());
+        if (userEntityOptional.isPresent()) {
+            return new CustomUserDetails(userEntityOptional.get());
         }
 
         return null;

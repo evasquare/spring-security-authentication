@@ -18,6 +18,7 @@ import com.evasquare.username_password_auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -73,11 +74,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
 
-        var data = new UserEntity();
-        data.setUsername(requestBody.getUsername());
-        data.setPassword(bCryptPasswordEncoder.encode(requestBody.getPassword()));
-        data.setRole("ROLE_USER");
-        userRepository.save(data);
+        try {
+            var data = new UserEntity();
+            data.setUsername(requestBody.getUsername());
+            data.setPassword(bCryptPasswordEncoder.encode(requestBody.getPassword()));
+            data.setRole("ROLE_USER");
+            userRepository.save(data);
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request.");
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body("Join Successful!");
     }
