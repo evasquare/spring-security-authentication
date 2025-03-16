@@ -3,7 +3,10 @@ package com.evasquare.username_password_auth.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.evasquare.username_password_auth.entity.UserEntity;
-import com.evasquare.username_password_auth.models.JoinAndLoginModel;
+import com.evasquare.username_password_auth.models.JoinModel;
+import com.evasquare.username_password_auth.models.LoginModel;
 import com.evasquare.username_password_auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +38,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @RequestBody JoinAndLoginModel loginModel,
+            @RequestBody LoginModel loginModel,
             HttpSession session,
             HttpServletRequest request,
             HttpServletResponse response) {
@@ -43,9 +47,23 @@ public class AuthController {
         }
 
         var context = SecurityContextHolder.createEmptyContext();
-        var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
-                        loginModel.getPassword()));
+        Authentication authentication = null;
+
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginModel.getUsername(),
+                            loginModel.getPassword()));
+        } catch (InternalAuthenticationServiceException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User doesn't exist.");
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid password.");
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred. Please try again later.");
+        }
 
         // Original implementation from #AuthenticationFilter
         context.setAuthentication(authentication);
@@ -68,10 +86,15 @@ public class AuthController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody JoinAndLoginModel requestBody) {
+    public ResponseEntity<String> join(@RequestBody JoinModel requestBody) {
         boolean isUsernameTaken = userRepository.existsByUsername(requestBody.getUsername());
         if (isUsernameTaken) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+        }
+
+        if (!requestBody.getPassword().equals(requestBody.getConfirmationPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Confirmation password doesn't match.");
         }
 
         try {

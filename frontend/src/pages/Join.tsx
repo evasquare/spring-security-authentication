@@ -26,14 +26,10 @@ const Form = styled.form`
 
 const InputContainer = styled.div`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 5px;
-`;
-
-const Input = styled.input`
-    width: 67%;
 `;
 
 const LoginSubmit = styled.input`
@@ -48,6 +44,7 @@ const ErrorMessage = styled.span`
 interface Inputs {
     username: string;
     password: string;
+    confirmationPassword: string;
 }
 
 const Join = () => {
@@ -75,6 +72,7 @@ const Join = () => {
                 body: JSON.stringify({
                     username: data.username,
                     password: data.password,
+                    confirmPassword: data.confirmationPassword,
                 }),
             });
             if (!response.ok) {
@@ -91,22 +89,35 @@ const Join = () => {
     return (
         <Wrapper>
             <Title>Join</Title>
+            <span>
+                Do you want to <a href="/">login</a>?
+            </span>
             <ErrorMessage>{errorMessage}</ErrorMessage>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <InputContainer>
                     <label htmlFor="username">Username</label>
-                    <Input {...register("username", { required: true })} />
+                    <input {...register("username", { required: true })} />
                 </InputContainer>
                 <InputContainer>
                     <label htmlFor="password">Password</label>
-                    <Input
+                    <input
                         {...register("password", { required: true })}
                         type="password"
                     />
                 </InputContainer>
+                <InputContainer>
+                    <label htmlFor="confirmationPassword">
+                        Confirm Password
+                    </label>
+                    <input
+                        {...register("confirmationPassword", {
+                            required: true,
+                        })}
+                        type="confirmationPassword"
+                    />
+                </InputContainer>
                 <LoginSubmit type="submit" />
             </Form>
-            <a href="/">Login?</a>
         </Wrapper>
     );
 };

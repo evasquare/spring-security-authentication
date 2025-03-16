@@ -115,7 +115,10 @@ const Home = () => {
                 </InputContainer>
                 <LoginSubmit type="submit" />
             </Form>
-            <a href="/join">Join?</a>
+            <span>
+                Don't have an account? You can <a href="/join">make one here</a>
+                !
+            </span>
         </Wrapper>
     );
 };

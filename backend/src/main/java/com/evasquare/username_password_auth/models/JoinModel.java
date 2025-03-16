@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class JoinAndLoginModel {
+public class JoinModel {
     private String username;
     private String password;
+    private String confirmationPassword;
 }
