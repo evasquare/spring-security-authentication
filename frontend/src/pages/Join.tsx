@@ -2,6 +2,48 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getCsrfToken, validateSession } from "../lib/utils";
 import { SERVER_URL } from "../lib/variables";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
+
+const Title = styled.h1`
+    color: black;
+`;
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+
+    margin-bottom: 30px;
+`;
+
+const InputContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 5px;
+`;
+
+const Input = styled.input`
+    width: 67%;
+`;
+
+const LoginSubmit = styled.input`
+    margin-top: 8px;
+`;
+
+const ErrorMessage = styled.span`
+    color: tomato;
+    margin-bottom: 12px;
+`;
 
 interface Inputs {
     username: string;
@@ -47,21 +89,25 @@ const Join = () => {
     };
 
     return (
-        <>
-            <h1>Join</h1>
-            {errorMessage}
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <input
-                    id="username"
-                    {...register("username", { required: true })}
-                />
-                <input {...register("password", { required: true })} />
-
-                <input type="submit" />
-            </form>
-
+        <Wrapper>
+            <Title>Join</Title>
+            <ErrorMessage>{errorMessage}</ErrorMessage>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <InputContainer>
+                    <label htmlFor="username">Username</label>
+                    <Input {...register("username", { required: true })} />
+                </InputContainer>
+                <InputContainer>
+                    <label htmlFor="password">Password</label>
+                    <Input
+                        {...register("password", { required: true })}
+                        type="password"
+                    />
+                </InputContainer>
+                <LoginSubmit type="submit" />
+            </Form>
             <a href="/">Login?</a>
-        </>
+        </Wrapper>
     );
 };
 

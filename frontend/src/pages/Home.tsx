@@ -4,7 +4,7 @@ import { SERVER_URL } from "../lib/variables";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const LoginContainer = styled.div`
+const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -44,6 +44,7 @@ const ErrorMessage = styled.span`
     color: tomato;
     margin-bottom: 12px;
 `;
+
 interface Inputs {
     username: string;
     password: string;
@@ -97,7 +98,7 @@ const Home = () => {
     };
 
     return (
-        <LoginContainer>
+        <Wrapper>
             <Title>Login</Title>
             <ErrorMessage>{errorMessage}</ErrorMessage>
             <Form onSubmit={handleSubmit(onSubmit)}>
@@ -106,13 +107,16 @@ const Home = () => {
                     <Input {...register("username", { required: true })} />
                 </InputContainer>
                 <InputContainer>
-                    <label htmlFor="username">Password</label>
-                    <Input {...register("password", { required: true })} />
+                    <label htmlFor="password">Password</label>
+                    <Input
+                        {...register("password", { required: true })}
+                        type="password"
+                    />
                 </InputContainer>
                 <LoginSubmit type="submit" />
             </Form>
             <a href="/join">Join?</a>
-        </LoginContainer>
+        </Wrapper>
     );
 };
 
