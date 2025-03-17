@@ -8,7 +8,7 @@ const User = () => {
     useEffect(() => {
         (async () => {
             if (!(await validateSession())) {
-                window.location.href = "/";
+                window.location.href = "/login";
             }
             setUsername(await getUsername());
         })();

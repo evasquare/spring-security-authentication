@@ -51,7 +51,7 @@ const Join = () => {
     useEffect(() => {
         (async () => {
             if (await validateSession()) {
-                window.location.href = "/user";
+                window.location.href = "/";
             }
         })();
     }, []);
@@ -72,7 +72,7 @@ const Join = () => {
                 body: JSON.stringify({
                     username: data.username,
                     password: data.password,
-                    confirmPassword: data.confirmationPassword,
+                    confirmationPassword: data.confirmationPassword,
                 }),
             });
             if (!response.ok) {
@@ -90,7 +90,7 @@ const Join = () => {
         <Wrapper>
             <Title>Join</Title>
             <span>
-                Do you want to <a href="/">login</a>?
+                Do you want to <a href="/login">login</a>?
             </span>
             <ErrorMessage>{errorMessage}</ErrorMessage>
             <Form onSubmit={handleSubmit(onSubmit)}>
@@ -113,7 +113,7 @@ const Join = () => {
                         {...register("confirmationPassword", {
                             required: true,
                         })}
-                        type="confirmationPassword"
+                        type="password"
                     />
                 </InputContainer>
                 <LoginSubmit type="submit" />

@@ -50,11 +50,11 @@ interface Inputs {
     password: string;
 }
 
-const Home = () => {
+const Login = () => {
     useEffect(() => {
         (async () => {
             if (await validateSession()) {
-                window.location.href = "/user";
+                window.location.href = "/";
             }
         })();
     }, []);
@@ -80,7 +80,7 @@ const Home = () => {
             if (!response.ok) {
                 throw new Error(await response.text());
             }
-            window.location.href = "/user";
+            window.location.href = "/";
         } catch (error: unknown) {
             const serverNotRespondingMessages = [
                 "NetworkError when attempting to fetch resource.",
@@ -123,4 +123,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Login;
