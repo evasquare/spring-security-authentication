@@ -5,6 +5,7 @@ import "normalize.css";
 import User from "./pages/User";
 import { useEffect, useState } from "react";
 import { validateSession } from "./lib/utils";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
     const [isValidated, setIsValidated] = useState(false);
@@ -34,6 +35,10 @@ function App() {
                     ) : null}
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/join" element={<Join />}></Route>
+                    <Route
+                        path="/change-password"
+                        element={<ChangePassword />}
+                    ></Route>
                 </Routes>
             </Router>
         </>

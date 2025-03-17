@@ -1,6 +1,23 @@
 import { useEffect, useState } from "react";
 import { getCsrfToken, validateSession } from "../lib/utils";
 import { SERVER_URL } from "../lib/variables";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
+
+const ButtonRow = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const A = styled.a`
+    color: inherit;
+`;
 
 const User = () => {
     const [username, setUsername] = useState<string | null>(null);
@@ -43,11 +60,15 @@ const User = () => {
     };
 
     return (
-        <>
-            <h1>Welcome {username ?? ""}</h1>
-            <button onClick={getUsername}>Get Username</button>
-            <button onClick={logOut}>Logout</button>
-        </>
+        <Wrapper>
+            <h1>Welcome {username ?? ""}!</h1>
+            <ButtonRow>
+                <A href="/change-password">
+                    <button>Change Password</button>
+                </A>
+                <button onClick={logOut}>Logout</button>
+            </ButtonRow>
+        </Wrapper>
     );
 };
 

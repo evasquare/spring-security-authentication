@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.evasquare.username_password_auth.entity.UserEntity;
+import com.evasquare.username_password_auth.models.ChangePasswordModel;
 import com.evasquare.username_password_auth.models.JoinModel;
 import com.evasquare.username_password_auth.models.LoginModel;
 import com.evasquare.username_password_auth.repository.UserRepository;
@@ -108,6 +109,34 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body("Join Successful!");
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordModel body) {
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
+
+        var userOptional = userRepository.findByUsername(authentication.getName());
+        var user = userOptional.get();
+
+        if (!bCryptPasswordEncoder.matches(body.getOriginalPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Original password doesn't match.");
+        }
+
+        System.out.println(body.getNewPassword());
+
+        if (!body.getNewPassword().equals(body.getNewPasswordConfirmation())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Confirmation password doesn't match.");
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(body.getNewPassword()));
+        userRepository.save(user);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully!");
+
     }
 
     @GetMapping("/get-username")
